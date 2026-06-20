@@ -1,0 +1,17 @@
+{
+  "drive_owner": {
+    "id": "user1",
+    "email": "owner@gmail.com",
+    "credentials_file": "/auth/user1_credentials.json",
+    "token_file": "/auth/user1_token.json"
+  },
+  "additional_users": [
+    {
+      "id": "user2",
+      "email": "wife@gmail.com",
+      "credentials_file": "/auth/user2_credentials.json",
+      "token_file": "/auth/user2_token.json"
+    }
+  ],
+  "shared_drive_folder_id": "REPLACE_WITH_YOUR_DRIVE_FOLDER_ID"
+}

@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  photo-backup:
+    build: .
+    container_name: googlephoto_backup
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # OAuth 토큰 및 credentials 저장소 (호스트 ↔ 컨테이너 공유)
+      - ./auth:/auth
+      # 로그 영구 보관
+      - ./logs:/app/logs
+      # 계정 설정 (수정 시 재빌드 불필요)
+      - ./config:/app/config
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

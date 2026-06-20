@@ -1,0 +1,8 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# 매일 새벽 2시: 백업 파이프라인 실행
+0 2 * * * cd /app && python src/backup.py >> /app/logs/cron.log 2>&1
+
+# 매일 아침 8시: 슬랙 통계 알림 전송
+0 8 * * * cd /app && python src/slack_notify.py >> /app/logs/cron.log 2>&1
