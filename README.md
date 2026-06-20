@@ -66,9 +66,12 @@ Docker Container (항상 실행)
 4. 생성 후 **JSON 다운로드**
 5. 파일 이름을 `user1_credentials.json` 으로 변경 후 `auth/` 폴더에 저장
 
-> ⚠️ 계정마다 별도의 클라이언트 ID를 생성하거나,  
-> 하나의 클라이언트 ID를 모든 계정에 공유해도 됩니다.  
-> 공유 시 동일한 credentials.json 파일을 `user1_credentials.json`, `user2_credentials.json` 등으로 복사하면 됩니다.
+> **클라이언트 ID는 1개만 만들어도 됩니다.**  
+> 동일한 credentials.json 파일을 `user1_credentials.json`, `user2_credentials.json` 등으로 복사해서 사용하면 됩니다.  
+>
+> 단, **OAuth 토큰(token.json)은 계정마다 반드시 별도로 발급해야 합니다.**  
+> 토큰 발급 시 브라우저에서 각자의 구글 계정으로 로그인하는 과정이 필요하며,  
+> 이 과정을 거쳐야 해당 계정의 구글 포토에 접근할 수 있습니다.
 
 ---
 
