@@ -1,6 +1,7 @@
 auth/
 .env
-logs/
+logs/*.log
+logs/*.json
 config/users.json
 __pycache__/
 *.pyc
