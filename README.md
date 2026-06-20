@@ -129,12 +129,24 @@ auth/
 
 ### 4. OAuth 토큰 발급 (계정별 최초 1회)
 
-Python 환경에서 실행합니다 (로컬에 Python 3.11+ 필요):
+NAS는 브라우저가 없으므로 **로컬 PC에서 토큰을 발급한 뒤 NAS로 복사**합니다.
+
+#### 4-1. 로컬 PC에서 토큰 발급
+
+Python 3.11+ 가 설치된 로컬 PC에서 실행합니다:
 
 ```bash
+# 저장소 클론 (로컬 PC)
+git clone https://github.com/joseph-84/googlephoto-backup.git
+cd googlephoto-backup
+
+# credentials 파일 배치
+# auth/user1_credentials.json, auth/user2_credentials.json ... 복사
+
+# 의존성 설치
 pip install -r requirements.txt
 
-# 각 계정마다 실행 (브라우저가 열리며 구글 로그인 요청)
+# 계정마다 실행 (브라우저가 열리며 구글 로그인 요청)
 python src/auth_setup.py --user user1
 python src/auth_setup.py --user user2
 python src/auth_setup.py --user user3
@@ -151,17 +163,18 @@ auth/
 ...
 ```
 
-> Docker 환경에서 auth_setup.py 실행 방법 (브라우저 접근이 필요한 경우):
-> ```bash
-> docker run --rm -it \
->   -v $(pwd)/auth:/auth \
->   -v $(pwd)/config:/app/config \
->   -e CONFIG_PATH=/app/config/users.json \
->   -e AUTH_DIR=/auth \
->   -p 8080:8080 \
->   googlephoto_backup-photo-backup \
->   python src/auth_setup.py --user user1
-> ```
+#### 4-2. 토큰 파일을 NAS로 복사
+
+```bash
+# NAS의 프로젝트 경로 예시: /volume1/googlephoto-backup/auth/
+scp auth/user1_token.json your_nas_user@nas_ip:/volume1/googlephoto-backup/auth/
+scp auth/user2_token.json your_nas_user@nas_ip:/volume1/googlephoto-backup/auth/
+```
+
+> **Windows 사용자**는 `scp` 대신 WinSCP나 파일 스테이션으로 복사해도 됩니다.  
+> `auth/` 폴더는 `.gitignore` 에 등록되어 있으므로 git에 올라가지 않습니다.
+
+> **토큰 갱신**: 토큰은 만료 시 자동으로 갱신됩니다. 재발급이 필요한 경우에만 이 과정을 반복하세요.
 
 ### 5. Docker 실행
 
