@@ -10,11 +10,12 @@
 1. [아키텍처](#아키텍처)
 2. [사전 준비: Google Cloud Console 설정](#사전-준비-google-cloud-console-설정)
 3. [설치 및 배포](#설치-및-배포)
-4. [업데이트 방법](#업데이트-방법)
-5. [수동 실행 및 테스트](#수동-실행-및-테스트)
-6. [로그 파일 구조](#로그-파일-구조)
-7. [중요 제약 사항 및 주의점](#중요-제약-사항-및-주의점)
-8. [파일 구조](#파일-구조)
+4. [시놀로지 NAS에서 실행하는 법](#시놀로지-nas에서-실행하는-법)
+5. [업데이트 방법](#업데이트-방법)
+6. [수동 실행 및 테스트](#수동-실행-및-테스트)
+7. [로그 파일 구조](#로그-파일-구조)
+8. [중요 제약 사항 및 주의점](#중요-제약-사항-및-주의점)
+9. [파일 구조](#파일-구조)
 
 ---
 
@@ -199,6 +200,66 @@ docker-compose up -d
 ```
 
 컨테이너가 실행되면 매일 새벽 2시에 자동 백업이 시작됩니다.
+
+---
+
+## 시놀로지 NAS에서 실행하는 법
+
+### 1. SSH 활성화
+
+DSM → 제어판 → 터미널 및 SNMP → **SSH 서비스 활성화** 체크 → 적용
+
+### 2. SSH 접속
+
+```bash
+ssh your_user@nas_ip -p 50022
+```
+
+> 포트는 DSM 터미널 설정에서 확인 (기본값: 22, 변경한 경우 해당 포트 사용)
+
+### 3. 저장소 클론
+
+```bash
+cd /volume1/docker
+git clone https://github.com/joseph-84/googlephoto-backup.git
+cd googlephoto-backup
+```
+
+> git 이 없으면 DSM **패키지 센터**에서 **Git** 패키지를 먼저 설치하세요.
+
+### 4. 설정 파일 준비
+
+```bash
+cp .env.example .env
+vi .env
+
+cp config/users.json.example config/users.json
+vi config/users.json
+```
+
+### 5. 토큰 파일 복사
+
+로컬 PC에서 발급한 token 파일을 파일 스테이션으로 `/volume1/docker/googlephoto-backup/auth/` 에 업로드합니다.
+
+### 6. 컨테이너 실행
+
+```bash
+sudo docker-compose up -d --build
+```
+
+### 7. 터미널 접속 (테스트)
+
+컨테이너 매니저 UI 터미널은 이 구조에서 동작하지 않습니다. SSH에서 아래 명령어로 접속하세요:
+
+```bash
+sudo docker exec -it googlephoto_backup bash
+```
+
+### 8. 백업 수동 실행 (테스트)
+
+```bash
+python /app/src/backup.py
+```
 
 ---
 
