@@ -186,6 +186,34 @@ docker-compose up -d
 
 ---
 
+## 업데이트 방법
+
+코드가 변경되었을 때 NAS에 반영하는 방법입니다.
+
+### 1. SSH로 NAS 접속
+
+```bash
+ssh your_user@nas_ip
+cd /volume1/googlephoto-backup
+```
+
+### 2. 최신 코드 받기
+
+```bash
+git pull
+```
+
+### 3. 컨테이너 재시작
+
+```bash
+sudo docker-compose up -d --build
+```
+
+> ⚠️ `--build` 옵션은 코드가 바뀐 경우 이미지를 새로 빌드합니다.  
+> `.env`, `config/users.json`, `auth/` 폴더는 git 관리 대상이 아니므로 pull 해도 덮어써지지 않습니다.
+
+---
+
 ## 수동 실행 및 테스트
 
 ```bash
