@@ -85,6 +85,10 @@ DELETE_FROM_PHOTOS=true
 
 ### 2. 계정 설정 (`config/users.json`)
 
+```bash
+cp config/users.json.example config/users.json
+```
+
 ```json
 {
   "drive_owner": {
