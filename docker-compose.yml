@@ -5,6 +5,8 @@ services:
     build: .
     container_name: googlephoto_backup
     restart: unless-stopped
+    stdin_open: true
+    tty: true
     env_file:
       - .env
     volumes:
