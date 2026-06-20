@@ -1,6 +1,7 @@
 auth/
 .env
 logs/
+config/users.json
 __pycache__/
 *.pyc
 .DS_Store

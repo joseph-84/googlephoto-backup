@@ -11,6 +11,12 @@
       "email": "wife@gmail.com",
       "credentials_file": "/auth/user2_credentials.json",
       "token_file": "/auth/user2_token.json"
+    },
+    {
+      "id": "user3",
+      "email": "child@gmail.com",
+      "credentials_file": "/auth/user3_credentials.json",
+      "token_file": "/auth/user3_token.json"
     }
   ],
   "shared_drive_folder_id": "REPLACE_WITH_YOUR_DRIVE_FOLDER_ID"
