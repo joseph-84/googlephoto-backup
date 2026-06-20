@@ -1,4 +1,5 @@
-auth/
+auth/*
+!auth/.gitkeep
 .env
 logs/*.log
 logs/*.json
