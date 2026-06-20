@@ -29,6 +29,7 @@ from typing import Optional
 
 import requests
 from dotenv import load_dotenv
+from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -71,6 +72,22 @@ log = logging.getLogger("backup")
 
 
 # ── SQLite 체크포인트 DB ───────────────────────────────────────────────────────
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
+SLACK_CHANNEL = os.environ.get("SLACK_CHANNEL", "")
+
+
+def send_slack_alert(message: str):
+    if not SLACK_WEBHOOK_URL:
+        return
+    payload = {"text": message}
+    if SLACK_CHANNEL:
+        payload["channel"] = SLACK_CHANNEL
+    try:
+        requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
+    except Exception:
+        pass
+
+
 class QuotaExceededError(Exception):
     """Google API 할당량 초과 — 오늘은 더 이상 진행 불가."""
 
@@ -183,9 +200,20 @@ def get_credentials(user_cfg: dict) -> Credentials:
     creds = Credentials.from_authorized_user_file(str(token_file), ALL_SCOPES)
     if creds.expired and creds.refresh_token:
         log.info("[%s] 토큰 갱신 중...", user_cfg["id"])
-        creds.refresh(Request())
-        with open(token_file, "w") as f:
-            f.write(creds.to_json())
+        try:
+            creds.refresh(Request())
+            with open(token_file, "w") as f:
+                f.write(creds.to_json())
+        except RefreshError:
+            msg = (
+                f"🔐 *[구글 포토 백업] 재인증 필요*\n"
+                f"`{user_cfg['id']}` ({user_cfg['email']}) 의 OAuth 토큰이 만료되었습니다.\n"
+                f"로컬 PC에서 아래 명령어를 실행해 재인증 후 NAS에 복사해주세요:\n"
+                f"```python src/auth_setup.py --user {user_cfg['id']}```"
+            )
+            log.error("[%s] 토큰 만료 — 재인증 필요: %s", user_cfg["id"], user_cfg["email"])
+            send_slack_alert(msg)
+            raise FileNotFoundError(f"토큰 만료: {user_cfg['id']}")
     return creds
 
 
