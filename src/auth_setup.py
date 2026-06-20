@@ -23,8 +23,10 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-CONFIG_PATH = os.environ.get("CONFIG_PATH", "/app/config/users.json")
-AUTH_DIR = os.environ.get("AUTH_DIR", "/auth")
+# 로컬 실행 시 프로젝트 루트 기준 상대경로를 기본값으로 사용
+_PROJECT_ROOT = Path(__file__).parent.parent
+CONFIG_PATH = os.environ.get("CONFIG_PATH", str(_PROJECT_ROOT / "config" / "users.json"))
+AUTH_DIR = os.environ.get("AUTH_DIR", str(_PROJECT_ROOT / "auth"))
 
 
 def load_user_config(user_id: str) -> dict:
@@ -44,17 +46,13 @@ def load_user_config(user_id: str) -> dict:
 
 
 def resolve_path(path_str: str) -> Path:
-    """컨테이너 내부 경로를 로컬 경로로 변환 (로컬 실행 시)."""
+    """컨테이너 내부 경로(/auth/...)를 로컬 실행 시 실제 경로로 변환."""
     p = Path(path_str)
-    if not p.is_absolute():
+    # 절대경로이고 실제로 존재하면 그대로 사용 (컨테이너 환경)
+    if p.is_absolute() and p.exists():
         return p
-    # /auth/... → auth/... (로컬 실행 fallback)
-    if not p.exists():
-        relative = Path(*p.parts[2:])  # /auth/user1_... → user1_...
-        local = Path(AUTH_DIR.lstrip("/")) / relative.name
-        if local.exists() or local.parent.exists():
-            return local
-    return p
+    # 로컬 실행: 파일명만 추출해서 AUTH_DIR 아래에서 찾기
+    return Path(AUTH_DIR) / p.name
 
 
 def run_auth(user_id: str):
