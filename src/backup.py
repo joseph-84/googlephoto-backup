@@ -243,7 +243,6 @@ def photos_search(session: requests.Session, page_token: Optional[str] = None) -
             },
             "mediaTypeFilter": {"mediaTypes": ["PHOTO"]},
         },
-        "orderBy": "MediaMetadata.creation_time",
     }
     if page_token:
         body["pageToken"] = page_token
