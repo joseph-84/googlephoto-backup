@@ -16,15 +16,19 @@ load_dotenv()
 
 LOGS_DIR = Path(os.environ.get("LOGS_DIR", "/app/logs"))
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
+SLACK_CHANNEL = os.environ.get("SLACK_CHANNEL", "")
 
 
 def send_slack(message: str):
     if not SLACK_WEBHOOK_URL:
         print("[슬랙] SLACK_WEBHOOK_URL 미설정 — 알림 건너뜀")
         return
+    payload = {"text": message}
+    if SLACK_CHANNEL:
+        payload["channel"] = SLACK_CHANNEL
     resp = requests.post(
         SLACK_WEBHOOK_URL,
-        json={"text": message},
+        json=payload,
         timeout=10,
     )
     if resp.status_code != 200:
